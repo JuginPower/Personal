@@ -21,6 +21,7 @@ public class Personalmaske extends javax.swing.JFrame {
     public Personalmaske() {
         initComponents();
         anzeigeMitarbeiterList.setModel(mitarbeiterModel);
+        anzeigeMitarbeiterList.setVisible(false);
     }
 
     /**
@@ -45,6 +46,7 @@ public class Personalmaske extends javax.swing.JFrame {
         berufLabel = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         anzeigeMitarbeiterList = new javax.swing.JList<>();
+        berufCheckedLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -54,9 +56,14 @@ public class Personalmaske extends javax.swing.JFrame {
         nameLabel.setText("Name:");
 
         berufeAuswahlList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Manager", "Mitarbeiter", "Handlanger" };
+            String[] strings = { "Manager", "Mitarbeiter", "Hilfskraft" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
+        });
+        berufeAuswahlList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                berufeAuswahlListValueChanged(evt);
+            }
         });
         jScrollPane1.setViewportView(berufeAuswahlList);
 
@@ -91,12 +98,15 @@ public class Personalmaske extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(anzeigeMitarbeiterList);
 
+        berufCheckedLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        berufCheckedLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 82, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(speichernButton)
                     .addGroup(layout.createSequentialGroup()
@@ -113,38 +123,33 @@ public class Personalmaske extends javax.swing.JFrame {
                     .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(191, 191, 191))
+                    .addComponent(neueMitarbeiterLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nameEingabe, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(27, 27, 27)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(neueMitarbeiterLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(nameEingabe, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(47, 47, 47))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                            .addComponent(berufCheckedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(0, 105, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(neueMitarbeiterLabel)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(41, 41, 41)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(nameLabel)
-                            .addComponent(nameEingabe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(berufLabel)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
+                .addGap(40, 40, 40)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(nameLabel)
+                    .addComponent(nameEingabe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(berufCheckedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(berufLabel)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE))
+                .addGap(99, 99, 99)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jRadioButton1)
                     .addComponent(jRadioButton2)
@@ -183,11 +188,17 @@ public class Personalmaske extends javax.swing.JFrame {
         this.mitarbeiterModel.addElement(neuePerson.getName());
         this.mitarbeiterObjectList.add(neuePerson);
         this.nameEingabe.setText(null);
+        this.berufeAuswahlList.clearSelection();
     }//GEN-LAST:event_speichernButtonActionPerformed
 
     private void anzeigeMitarbeiterListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_anzeigeMitarbeiterListValueChanged
         
     }//GEN-LAST:event_anzeigeMitarbeiterListValueChanged
+
+    private void berufeAuswahlListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_berufeAuswahlListValueChanged
+        anzeigeMitarbeiterList.setVisible(true);
+        this.berufCheckedLabel.setText(this.berufeAuswahlList.getSelectedValue());
+    }//GEN-LAST:event_berufeAuswahlListValueChanged
 
     /**
      * @param args the command line arguments
@@ -226,6 +237,7 @@ public class Personalmaske extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> anzeigeMitarbeiterList;
+    private javax.swing.JLabel berufCheckedLabel;
     private javax.swing.JLabel berufLabel;
     private javax.swing.JList<String> berufeAuswahlList;
     private javax.swing.ButtonGroup buttonGroup1;
