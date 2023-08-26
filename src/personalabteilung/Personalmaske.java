@@ -3,8 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package personalabteilung;
-import java.util.Arrays;
-import java.util.ArrayList;
+import java.util.*;
 import javax.swing.*;
 /**
  *
@@ -140,10 +139,11 @@ public class Personalmaske extends javax.swing.JFrame {
                 .addGap(23, 23, 23)
                 .addComponent(neueMitarbeiterLabel)
                 .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nameLabel)
-                    .addComponent(nameEingabe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(berufCheckedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(berufCheckedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(nameLabel)
+                        .addComponent(nameEingabe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
@@ -168,27 +168,70 @@ public class Personalmaske extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
+    private JRadioButton getSelectedRadioButton() throws RadioButtonException {
+        
+        Enumeration<AbstractButton> allRadioButtons=this.buttonGroup1.getElements();
+            while (allRadioButtons.hasMoreElements()) {
+                JRadioButton oneRadioButton = (JRadioButton) allRadioButtons.nextElement();
+                if (oneRadioButton.isSelected()) {
+                    return oneRadioButton;
+                }
+            }
+        throw new RadioButtonException("Bitte wählen Sie ein Geschlecht aus.");
+    }
+    
+    private String getSelectedBeruf() throws ListSelectException {
+        
+        List<String> berufe = berufeAuswahlList.getSelectedValuesList();
+        
+        if(berufe.isEmpty()) {
+            throw new ListSelectException("Bitte wählen Sie ein Beruf aus.");
+        }
+        if(berufe.size()>1) {
+            throw new ListSelectException("Bitte wählen Sie nur einen Beruf aus.");
+        }
+        return berufe.get(0);
+    }
+    
+    private String getTypedInName() throws NameInputException {
+        String name = "";
+        try {
+            name = nameEingabe.getText();
+        } catch(NullPointerException e) {
+            throw new NameInputException("Bitte Namen eingeben.");
+        }
+        if (name.length()==0) {
+            throw new NameInputException("Bitte Namen eingeben.");
+        }
+        return name;
+    }
+    
     private void speichernButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speichernButtonActionPerformed
         
-        String geschlecht;
+        String meldung = "";
         
-        if (jRadioButton1.isSelected()){
-            geschlecht = jRadioButton1.getText();
+        try {
+            JRadioButton selectedRadioButton = this.getSelectedRadioButton();
+            String beruf = this.getSelectedBeruf();
+            String name = this.getTypedInName();
+            Person neuePerson = new Person(name, beruf, selectedRadioButton.getText());
+            mitarbeiterObjectList.add(neuePerson);
+            mitarbeiterModel.addElement(name);
         }
-        if (jRadioButton2.isSelected()){
-            geschlecht = jRadioButton2.getText();
+        catch(NameInputException | ListSelectException| RadioButtonException e) {
+            meldung += e.getMessage()+"\n";
+        } 
+        finally {
+            if(meldung.length()>0) {
+                JOptionPane.showMessageDialog(null, meldung, null, JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, this.berufeAuswahlList.getSelectedValue()+ " " + nameEingabe.getText() + " erfolgreich gespeichert!", null, JOptionPane.INFORMATION_MESSAGE);
+                anzeigeMitarbeiterList.setVisible(false);
+                buttonGroup1.clearSelection();
+                nameEingabe.setText("");
+                berufeAuswahlList.clearSelection();
+            }
         }
-        if (jRadioButton3.isSelected()){
-            geschlecht = jRadioButton3.getText();
-        } else {
-            geschlecht = "Männlich";
-        }
-        
-        Person neuePerson = new Person(nameEingabe.getText(), berufeAuswahlList.getSelectedValue(), geschlecht);
-        this.mitarbeiterModel.addElement(neuePerson.getName());
-        this.mitarbeiterObjectList.add(neuePerson);
-        this.nameEingabe.setText(null);
-        this.berufeAuswahlList.clearSelection();
     }//GEN-LAST:event_speichernButtonActionPerformed
 
     private void anzeigeMitarbeiterListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_anzeigeMitarbeiterListValueChanged
@@ -197,7 +240,14 @@ public class Personalmaske extends javax.swing.JFrame {
 
     private void berufeAuswahlListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_berufeAuswahlListValueChanged
         anzeigeMitarbeiterList.setVisible(true);
-        this.berufCheckedLabel.setText(this.berufeAuswahlList.getSelectedValue());
+        berufCheckedLabel.setText(berufeAuswahlList.getSelectedValue());
+        mitarbeiterModel.clear();
+        
+        for (Person p: mitarbeiterObjectList) {
+            if(p.getBeruf().equals(berufCheckedLabel.getText())){
+                mitarbeiterModel.addElement(p.getName());
+            }
+        }
     }//GEN-LAST:event_berufeAuswahlListValueChanged
 
     /**

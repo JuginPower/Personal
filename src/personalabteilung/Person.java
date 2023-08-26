@@ -14,13 +14,19 @@ public class Person {
     private String beruf;
     private String geschlecht;
     
-    public Person(String name, String beruf, String geschlecht){
-        this.name = name;
-        this.beruf = beruf;
-        this.geschlecht = geschlecht;
+    public Person(String eingabeName, String eingabeBeruf, String eingabeGeschlecht){
+        
+        this.name = eingabeName;
+        this.beruf = eingabeBeruf;
+        this.geschlecht = eingabeGeschlecht;
+        
     }
     
     public String getName(){
         return this.name;
+    }
+    
+    public String getBeruf(){
+        return this.beruf;
     }
 }
