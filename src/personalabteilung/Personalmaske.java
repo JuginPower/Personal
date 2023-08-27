@@ -4,6 +4,7 @@
  */
 package personalabteilung;
 import java.util.*;
+import java.util.regex.*;
 import javax.swing.*;
 /**
  *
@@ -53,7 +54,7 @@ public class Personalmaske extends javax.swing.JFrame {
         sucheButton = new javax.swing.JButton();
         suchEingabe = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        mitarbeiterTextArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -113,10 +114,15 @@ public class Personalmaske extends javax.swing.JFrame {
         bdayLabel.setText("Geburtsdatum:");
 
         sucheButton.setText("Suchen");
+        sucheButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sucheButtonActionPerformed(evt);
+            }
+        });
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane3.setViewportView(jTextArea1);
+        mitarbeiterTextArea.setColumns(20);
+        mitarbeiterTextArea.setRows(5);
+        jScrollPane3.setViewportView(mitarbeiterTextArea);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -150,7 +156,7 @@ public class Personalmaske extends javax.swing.JFrame {
                 .addGap(0, 6, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jRadioButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -158,11 +164,12 @@ public class Personalmaske extends javax.swing.JFrame {
                         .addGap(18, 18, 18))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(speichernButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(suchEingabe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(7, 7, 7)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sucheButton)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(suchEingabe, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(16, 16, 16)
+                        .addComponent(sucheButton))
                     .addComponent(jRadioButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(34, 34, 34))
         );
@@ -248,64 +255,75 @@ public class Personalmaske extends javax.swing.JFrame {
     }
     
     private String getTypedInName() throws CustomException {
-        String name = "";
-        try {
-            name = nameEingabe.getText();
-        } catch(NullPointerException e) {
-            throw new CustomException("Bitte Namen eingeben.");
+        boolean textBool = this.isText(nameEingabe);
+        
+        if(textBool) {
+            return nameEingabe.getText();
+        } else {
+            throw new CustomException("Bitte Vornamen eingeben.");
         }
-        if (name.length()==0) {
-            throw new CustomException("Bitte Namen eingeben.");
-        }
-        return name;
     }
     
     private String getTypedInVorname() throws CustomException {
-        String vorName = "";
-        try {
-            vorName = vornameEingabe.getText();
-        } catch(NullPointerException e) {
+        
+        boolean textBool = this.isText(vornameEingabe);
+        
+        if(textBool) {
+            return vornameEingabe.getText();
+        } else {
             throw new CustomException("Bitte Vornamen eingeben.");
         }
-        if (vorName.length()==0) {
-            throw new CustomException("Bitte Vornamen eingeben.");
-        }
-        return vorName;
     }
     
     private String getTypedInBday() throws CustomException {
         
-        String bday = "";
-        try {
-            bday = bdayEingabe.getText();
-        } catch(NullPointerException e) {
+        boolean textBool = this.isText(bdayEingabe);
+        
+        if(textBool) {
+            Pattern pattern = Pattern.compile("\\d{2}\\.\\d{2}\\.\\d{4}");
+            String bdayText = bdayEingabe.getText();
+            Matcher matcher = pattern.matcher(bdayText);
+            if(matcher.find()) {
+                return bdayText;
+            } else {
+                throw new CustomException("Bitte das Geburtsdatum im richtigen Formaat eingeben dd.mm.yyyy");
+            }
+        } else {
             throw new CustomException("Bitte Geburtsdatum eingeben.");
         }
-        if (bday.length()==0) {
-            throw new CustomException("Bitte Geburtsdatum eingeben.");
-        }
-        return bday;
     }
     
     private String getTypedInSuche() throws CustomException {
         
-        String suchString = "";
-        try {
-            suchString = suchEingabe.getText();
-        } catch(NullPointerException e) {
-            throw new CustomException("Bitte Geburtsdatum eingeben.");
+        boolean textBool = this.isText(suchEingabe);
+        
+        if(textBool) {
+            return suchEingabe.getText();
+        } else {
+            throw new CustomException("Bitte in die Suchleiste Vorname oder Name eingeben.");
         }
-        if (suchString.length()==0) {
-            throw new CustomException("Bitte Geburtsdatum eingeben.");
-        }
-        return suchString;
     }
     
-    private String findMitarbeiter(String attribut) {
-        for(Person p: mitarbeiterObjectList) {
-            // Müsste schauen wie ich bequem durch die Attributwerte loope
+    private boolean isText(JTextField element) {
+        try {
+            String result = element.getText();
+        } catch(NullPointerException e) {
+            return false;
         }
-        // return toString von Person
+        if (element.getText().length()==0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    private String findMitarbeiter(String attribut) throws CustomException {
+        for(Person p: mitarbeiterObjectList) {
+            if(attribut.equals(p.getName()) || attribut.equals(p.getVorname())) {
+                return p.toString();
+            }
+        }
+        throw new CustomException("Person mit dem Attribut " + attribut + " nicht gefunden.");
     }
     
     private void speichernButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speichernButtonActionPerformed
@@ -356,6 +374,16 @@ public class Personalmaske extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_berufeAuswahlListValueChanged
 
+    private void sucheButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sucheButtonActionPerformed
+        try {
+            String suchwort = this.getTypedInSuche();
+            String vorstellung = this.findMitarbeiter(suchwort);
+            mitarbeiterTextArea.setText(vorstellung);
+        } catch(CustomException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), null, JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_sucheButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -405,7 +433,7 @@ public class Personalmaske extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea mitarbeiterTextArea;
     private javax.swing.JTextField nameEingabe;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JLabel neueMitarbeiterLabel;
