@@ -43,7 +43,6 @@ public class Person {
     
     @Override
     public String toString() {
-        
         return "Vorname: " + vorname + "\nName: " + name + "\nBeruf: " + 
                 beruf +"\nGeburtsdatum: " + geburtsdatum + "\nGeschlecht: " + geschlecht;
     }
